@@ -4,9 +4,9 @@
 A single line code analyzer based on the first three stages of the compilation process; Lexical Analysis, Syntax Analysis, and Semantic Analysis.
 
 # Group 4 Members
-* Tapican, Aldwin John
-* Ramos, Mark Owen
-* Mabuti, Marjolo
+* Devansh, Abhinav
+* Rohan, Vansh
+* Advik
 
 # Preview
 
