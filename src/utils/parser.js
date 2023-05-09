@@ -13,7 +13,10 @@ function parse(tokens) {
   ];
 
   let state = false;
-
+  if(tokens[tokens.length -1] != "<delimiter>"){
+    alert("Missing semicolon");
+    return false;
+  }
   if (tokens.length > correctSyntax[0].length) return false;
 
   for (let syntax of correctSyntax) {
