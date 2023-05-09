@@ -23,7 +23,7 @@ function tokenize(lexemes) {
       lexeme === "false"
     ) {
       if (lexeme.length > 10) {
-        prompt(`Exceeded length of numeric constant or identifier: ${lexeme}`);
+        alert(`Exceeded length of numeric constant or identifier: ${lexeme}`);
       }
       tokens.push("<value>");
     } else if (lexeme.includes(";")) {
@@ -31,11 +31,11 @@ function tokenize(lexemes) {
     } else {
       if (/^[a-zA-Z_]+[a-zA-Z0-9_]*$/.test(lexeme)) {
         if (lexeme.length > 15) {
-          prompt(`Exceeded length of identifier: ${lexeme}`);
+          alert(`Exceeded length of identifier: ${lexeme}`);
         }
         tokens.push("<identifier>");
       } else {
-        prompt(`Spelling error: ${lexeme}`);
+        alert(`Spelling error: ${lexeme}`);
       }
     }
   }
