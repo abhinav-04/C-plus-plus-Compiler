@@ -1,5 +1,10 @@
 /*------Lexical Analyzer--------*/
 
+
+function throwError(message) {
+  throw new Error(`Lexical error: ${message}`);
+}
+
 function tokenize(lexemes) {
   const dataTypes = ["int", "double", "char", "float", "bool"];
   const tokens = [];
@@ -17,11 +22,21 @@ function tokenize(lexemes) {
       lexeme === "true" ||
       lexeme === "false"
     ) {
+      if (lexeme.length > 10) {
+        throwError(`Exceeded length of numeric constant or identifier: ${lexeme}`);
+      }
       tokens.push("<value>");
     } else if (lexeme.includes(";")) {
       tokens.push("<delimiter>");
     } else {
-      tokens.push("<identifier>");
+      if (/^[a-zA-Z_]+[a-zA-Z0-9_]*$/.test(lexeme)) {
+        if (lexeme.length > 15) {
+          throwError(`Exceeded length of identifier: ${lexeme}`);
+        }
+        tokens.push("<identifier>");
+      } else {
+        throwError(`Spelling error: ${lexeme}`);
+      }
     }
   }
   return tokens;
