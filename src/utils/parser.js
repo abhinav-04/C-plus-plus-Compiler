@@ -1,47 +1,78 @@
 /*------Syntax Analyzer--------*/
 
-function tokenize(lexemes) {
-  const dataTypes = ["int", "double", "char", "float", "bool"];
-  const tokens = [];
 
-  for (const lexeme of lexemes) {
-    if (dataTypes.includes(lexeme)) {
-      tokens.push("<keyword>");
-    } else if (lexeme.includes("=")) {
-      tokens.push("<assignment_operator>");
-      const parts = lexeme.split("=");
-      if (parts[0].length > 20) {
-       alert(`Lexical error: Identifier "${parts[0]}" exceeds 20 characters.`);
-      } else if (isNaN(parts[1]) && parts[1].length > 20) {
-        alert(`Lexical error: Value "${parts[1]}" exceeds 20 characters.`);
+function parse(tokens) {
+  const correctSyntax = [
+    [
+      "<keyword>",
+      "<identifier>",
+      "<assignment_operator>",
+      "<value>",
+      "<delimiter>",
+    ],
+    ["<keyword>", "<identifier>", "<delimiter>"],
+  ];
+
+  if (tokens.length > correctSyntax[0].length) {
+    alert("Syntax error: Too many tokens.");
+  }
+
+  let stack = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token === "{") {
+      stack.push("{");
+    } else if (token === "}") {
+      if (stack.length === 0) {
+       alert("Syntax error: Missing opening brace.");
+      } else {
+        stack.pop();
       }
-    } else if (
-      lexeme.includes('"') ||
-      lexeme.includes("'") ||
-      !isNaN(lexeme.charAt(0)) ||
-      lexeme.includes(".") ||
-      lexeme === "true" ||
-      lexeme === "false"
-    ) {
-      tokens.push("<value>");
-      if (isNaN(lexeme) && lexeme.length > 20) {
-        alert(`Lexical error: Value "${lexeme}" exceeds 20 characters.`);
+    } else if (token === "print") {
+      const nextToken = tokens[i + 1];
+      if (nextToken === "(") {
+        let j = i + 2;
+        while (j < tokens.length && tokens[j] !== ")") {
+          if (tokens[j] === ";" || tokens[j] === "{") {
+           alert("Syntax error: Attempting to print variable without declaring it.");
+          }
+          j++;
+        }
+        if (j === tokens.length) {
+         alert("Syntax error: Missing closing parenthesis.");
+        }
+      } else {
+        alert("Syntax error: Missing opening parenthesis.");
       }
-    } else if (lexeme.includes(";")) {
-      tokens.push("<delimiter>");
-    } else {
-      tokens.push("<identifier>");
-      if (lexeme.length > 20) {
-        alert(`Lexical error: Identifier "${lexeme}" exceeds 20 characters.`);
-      }
-      if (lexeme.match(/^[0-9]/)) {
-       alert(`Lexical error: Identifier "${lexeme}" starts with a number.`);
-      }
-      if (lexeme.match(/[^\w\d]/)) {
-        alert(`Lexical error: Identifier "${lexeme}" contains non-alphanumeric characters.`);
+    } else if (token === ";") {
+      const prevToken = tokens[i - 1];
+      if (prevToken !== ">" && prevToken !== "<" && prevToken !== "=") {
+        alert("Syntax error: Missing semicolon.");
       }
     }
   }
-  return tokens;
-}
 
+  if (stack.length > 0) {
+    alert("Syntax error: Missing closing brace.");
+  }
+
+  for (let syntax of correctSyntax) {
+    if (tokens.length !== syntax.length) {
+      continue;
+    }
+
+    let validSyntax = true;
+    for (let i = 0; i < syntax.length; i++) {
+      if (tokens[i] !== syntax[i]) {
+        validSyntax = false;
+        break;
+      }
+    }
+
+    if (validSyntax) {
+      return true;
+    }
+  }
+
+  throw new Error("Syntax error: Invalid token sequence.");
+}
