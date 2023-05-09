@@ -1,5 +1,10 @@
 /*------Lexical Analyzer--------*/
 
+
+function throwError(message) {
+  throw new Error(`Lexical error: ${message}`);
+}
+
 function tokenize(lexemes) {
   const dataTypes = ["int", "double", "char", "float", "bool"];
   const tokens = [];
@@ -9,12 +14,6 @@ function tokenize(lexemes) {
       tokens.push("<keyword>");
     } else if (lexeme.includes("=")) {
       tokens.push("<assignment_operator>");
-      const parts = lexeme.split("=");
-      if (parts[0].length > 20) {
-       alert(`Lexical error: Identifier "${parts[0]}" exceeds 20 characters.`);
-      } else if (isNaN(parts[1]) && parts[1].length > 20) {
-        alert(`Lexical error: Value "${parts[1]}" exceeds 20 characters.`);
-      }
     } else if (
       lexeme.includes('"') ||
       lexeme.includes("'") ||
@@ -23,24 +22,68 @@ function tokenize(lexemes) {
       lexeme === "true" ||
       lexeme === "false"
     ) {
-      tokens.push("<value>");
-      if (isNaN(lexeme) && lexeme.length > 20) {
-        alert(`Lexical error: Value "${lexeme}" exceeds 20 characters.`);
+      if (lexeme.length > 10) {
+        alert(`Exceeded length of numeric constant or identifier: ${lexeme}`);
       }
+      tokens.push("<value>");
     } else if (lexeme.includes(";")) {
       tokens.push("<delimiter>");
     } else {
-      tokens.push("<identifier>");
-      if (lexeme.length > 20) {
-        alert(`Lexical error: Identifier "${lexeme}" exceeds 20 characters.`);
-      }
-      if (lexeme.match(/^[0-9]/)) {
-       alert(`Lexical error: Identifier "${lexeme}" starts with a number.`);
-      }
-      if (lexeme.match(/[^\w\d]/)) {
-        alert(`Lexical error: Identifier "${lexeme}" contains non-alphanumeric characters.`);
+      if (/^[a-zA-Z_]+[a-zA-Z0-9_]*$/.test(lexeme)) {
+        if (lexeme.length > 15) {
+          alert(`Exceeded length of identifier: ${lexeme}`);
+        }
+        tokens.push("<identifier>");
+      } else {
+        alert(`Spelling error: ${lexeme}`);
       }
     }
   }
   return tokens;
 }
+
+function lex(input, isFile) {
+  const individualChars = input.split("");
+
+  const lexemes = [];
+
+  let temp = "",
+    quotedString = "";
+
+  let isQuote = false;
+
+  for (const c of individualChars) {
+    if (c === "=" && !isQuote) {
+      lexemes.push(temp);
+      lexemes.push(c);
+      temp = "";
+    } else if (c === ";" && !isQuote) {
+      lexemes.push(temp);
+      lexemes.push(c);
+      temp = "";
+    } else if (c === " " && !isQuote) {
+      lexemes.push(temp);
+      temp = "";
+    } else if (c === '"') {
+      quotedString += c;
+      if (isQuote) {
+        lexemes.push(temp);
+        temp = "";
+        lexemes.push(quotedString);
+        quotedString = "";
+        isQuote = false;
+      } else {
+        isQuote = true;
+      }
+    } else if (isQuote) {
+      quotedString += c;
+    } else {
+      temp += c;
+    }
+  }
+  lexemes.push(temp);
+  if (isFile) lexemes.pop(); // remove /n
+  return lexemes.filter((n) => n !== "");
+}
+
+export { tokenize, lex };
