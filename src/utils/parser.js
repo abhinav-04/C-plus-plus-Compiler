@@ -13,7 +13,7 @@ function parse(tokens) {
   ];
 
   if (tokens.length > correctSyntax[0].length) {
-    throw new Error("Syntax error: Too many tokens.");
+    alert("Syntax error: Too many tokens.");
   }
 
   let stack = [];
@@ -23,7 +23,7 @@ function parse(tokens) {
       stack.push("{");
     } else if (token === "}") {
       if (stack.length === 0) {
-        throw new Error("Syntax error: Missing opening brace.");
+       alert("Syntax error: Missing opening brace.");
       } else {
         stack.pop();
       }
@@ -33,26 +33,26 @@ function parse(tokens) {
         let j = i + 2;
         while (j < tokens.length && tokens[j] !== ")") {
           if (tokens[j] === ";" || tokens[j] === "{") {
-            throw new Error("Syntax error: Attempting to print variable without declaring it.");
+           alert("Syntax error: Attempting to print variable without declaring it.");
           }
           j++;
         }
         if (j === tokens.length) {
-          throw new Error("Syntax error: Missing closing parenthesis.");
+         alert("Syntax error: Missing closing parenthesis.");
         }
       } else {
-        throw new Error("Syntax error: Missing opening parenthesis.");
+        alert("Syntax error: Missing opening parenthesis.");
       }
     } else if (token === ";") {
       const prevToken = tokens[i - 1];
       if (prevToken !== ">" && prevToken !== "<" && prevToken !== "=") {
-        throw new Error("Syntax error: Missing semicolon.");
+        alert("Syntax error: Missing semicolon.");
       }
     }
   }
 
   if (stack.length > 0) {
-    throw new Error("Syntax error: Missing closing brace.");
+    alert("Syntax error: Missing closing brace.");
   }
 
   for (let syntax of correctSyntax) {
