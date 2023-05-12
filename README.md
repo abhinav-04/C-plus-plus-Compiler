@@ -11,7 +11,7 @@ A single line code analyzer based on the first three stages of the compilation p
 
 # Preview
 
-![image](./public/preview-img.png)
+![image](https://github.com/abhinav-04/C-plus-plus-Compiler/assets/73755529/91403878-60b9-4fa9-b021-0279f9dd99a7)
 
 # Getting started
 
